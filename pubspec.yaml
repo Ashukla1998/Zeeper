@@ -1,0 +1,53 @@
+name: zeeper
+description: "Smart offline expense tracker."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # DATE FORMAT
+  intl: ^0.20.2
+
+  # LOCAL DATABASE
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+flutter:
+  uses-material-design: true
+
+  # FUTURE ASSETS
+  assets:
+    - assets/icon/
+    
+# APP ICON CONFIG
+flutter_launcher_icons:
+  android: true
+  ios: true
+
+  image_path: "assets/icon/zeeper.png"
+
+  adaptive_icon_background: "#0F0F0F"
+  adaptive_icon_foreground: "assets/icon/zeeper.png"
+
+  # FUTURE CUSTOM FONTS
+  # fonts:
+  #   - family: Poppins
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #         weight: 700
