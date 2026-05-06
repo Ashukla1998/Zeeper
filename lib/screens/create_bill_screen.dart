@@ -5,6 +5,7 @@ import 'package:printing/printing.dart';
 
 import '../models/bill_model.dart';
 import '../services/pdf_service.dart';
+import '../services/bill_storage.dart';
 
 class CreateBillScreen extends StatefulWidget {
   const CreateBillScreen({super.key});
@@ -204,12 +205,33 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                         total: total,
                       );
 
-                      // OPEN PDF PREVIEW
                       await Printing.layoutPdf(
                         onLayout: (_) async {
                           return await file.readAsBytes();
                         },
                       );
+
+                      // CHECK IF SCREEN STILL EXISTS
+                      if (!mounted) return;
+
+                      await BillStorage.saveBill({
+                        "customer": customerController.text,
+
+                        "total": total.toStringAsFixed(2),
+
+                        "date": DateTime.now().toString(),
+
+                        "path": file.path,
+                      });
+
+                      // SEND BILL DATA BACK
+                      Navigator.pop(context, {
+                        "customer": customerController.text,
+
+                        "total": total.toStringAsFixed(2),
+
+                        "path": file.path,
+                      });
                     },
 
                     icon: const Icon(Icons.picture_as_pdf),
