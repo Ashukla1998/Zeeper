@@ -5,8 +5,9 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-
 import '../models/bill_model.dart';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
 
 class PdfService {
   static Future<File> generateBill({
@@ -15,6 +16,11 @@ class PdfService {
     required List<BillItem> items,
     required double total,
   }) async {
+    final ByteData bytes = await rootBundle.load('assets/icon/zeeper.png');
+
+    final Uint8List logoBytes = bytes.buffer.asUint8List();
+
+    final logoImage = pw.MemoryImage(logoBytes);
     // CREATE PDF
     final pdf = pw.Document();
 
@@ -28,15 +34,26 @@ class PdfService {
 
             children: [
               // TITLE
-              pw.Center(
-                child: pw.Text(
-                  "ZEEPER BILL",
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
 
-                  style: pw.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pw.FontWeight.bold,
+                children: [
+                  pw.Text(
+                    "ZEEPER BILL",
+
+                    style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
-                ),
+
+                  pw.Container(
+                    width: 100,
+                    height: 100,
+
+                    child: pw.Image(logoImage),
+                  ),
+                ],
               ),
 
               pw.Container(height: 20),

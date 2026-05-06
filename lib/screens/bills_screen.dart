@@ -28,11 +28,7 @@ class _BillsScreenState extends State<BillsScreen> {
   }
 
   // ADD BILL
-  void addBill({
-    required String customer,
-    required String total,
-    required String path,
-  }) {
+  void addBill({required String customer, required String total}) {
     setState(() {
       bills.add({
         "customer": customer,
@@ -40,8 +36,6 @@ class _BillsScreenState extends State<BillsScreen> {
         "total": total,
 
         "date": DateTime.now().toString(),
-
-        "path": path,
       });
     });
   }
@@ -71,13 +65,7 @@ class _BillsScreenState extends State<BillsScreen> {
 
           // RECEIVE GENERATED BILL
           if (result != null) {
-            addBill(
-              customer: result["customer"],
-
-              total: result["total"],
-
-              path: result["path"],
-            );
+            addBill(customer: result["customer"], total: result["total"]);
           }
         },
 

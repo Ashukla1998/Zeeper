@@ -220,8 +220,6 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                         "total": total.toStringAsFixed(2),
 
                         "date": DateTime.now().toString(),
-
-                        "path": file.path,
                       });
 
                       // SEND BILL DATA BACK
