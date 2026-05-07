@@ -1,60 +1,10 @@
-// import 'package:flutter/material.dart';
-// import 'calculator_screen.dart';
-// import 'dashboard_screen.dart';
-// import 'history_screen.dart';
-
-// class MainScreen extends StatefulWidget {
-//   const MainScreen({super.key});
-
-//   @override
-//   _MainScreenState createState() => _MainScreenState();
-// }
-
-// class _MainScreenState extends State<MainScreen> {
-//   int selectedIndex = 0;
-
-//   List<Map<String, dynamic>> transactions = [];
-
-//   void addTransaction(double amount, String type) {
-//     setState(() {
-//       transactions.add({
-//         "amount": amount,
-//         "type": type,
-//         "date": DateTime.now(),
-//       });
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final screens = [
-//       CalculatorScreen(onAdd: addTransaction),
-//       DashboardScreen(transactions: transactions),
-//       HistoryScreen(transactions: transactions),
-//     ];
-
-//     return Scaffold(
-//       body: screens[selectedIndex],
-//       bottomNavigationBar: BottomNavigationBar(
-//         currentIndex: selectedIndex,
-//         onTap: (i) => setState(() => selectedIndex = i),
-//         items: const [
-//           BottomNavigationBarItem(icon: Icon(Icons.calculate), label: "Calc"),
-//           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dash"),
-//           BottomNavigationBarItem(icon: Icon(Icons.list), label: "History"),
-//         ],
-//       ),
-//     );
-//   }
-// }
-// main_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import 'calculator_screen.dart';
 import 'dashboard_screen.dart';
 import 'history_screen.dart';
+import 'bills_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -129,6 +79,8 @@ class _MainScreenState extends State<MainScreen> {
       DashboardScreen(transactions: transactions),
 
       HistoryScreen(transactions: transactions, onDelete: deleteTransaction),
+
+      BillsScreen(),
     ];
 
     return Scaffold(
@@ -150,10 +102,12 @@ class _MainScreenState extends State<MainScreen> {
 
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.calculate), label: "Calc"),
-
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dash"),
-
           BottomNavigationBarItem(icon: Icon(Icons.list), label: "History"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long),
+            label: "Bills",
+          ),
         ],
       ),
     );

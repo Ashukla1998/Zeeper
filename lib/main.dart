@@ -14,6 +14,8 @@ void main() async {
   // OPEN BOX
   await Hive.openBox('transactions');
 
+  await Hive.openBox('billsBox');
+
   runApp(const MyApp());
 }
 

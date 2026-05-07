@@ -8,7 +8,7 @@ class HistoryScreen extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
   final Function(int) onDelete;
 
-  HistoryScreen({
+  const HistoryScreen({
     super.key,
     required this.transactions,
     required this.onDelete,
@@ -118,7 +118,7 @@ class HistoryScreen extends StatelessWidget {
 
                             child: buildCard(t, localIndex),
                           );
-                        }).toList(),
+                        }),
                       ],
                     );
                   }).toList(),
@@ -132,7 +132,7 @@ class HistoryScreen extends StatelessWidget {
   Widget buildCard(Map<String, dynamic> t, int index) {
     Color color = t["type"] == "cash" ? Colors.green : Colors.blue;
 
-    DateTime date = t["date"] != null ? t["date"] : DateTime.now();
+    DateTime date = t["date"] ?? DateTime.now();
 
     Widget card = Container(
       margin: EdgeInsets.only(bottom: 10),
