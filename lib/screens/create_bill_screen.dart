@@ -231,7 +231,6 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                           text: "Invoice from Zeeper",
                         ),
                       );
-
                       // SEND BILL DATA BACK
                       Navigator.pop(context, {
                         "customer": customerController.text,
