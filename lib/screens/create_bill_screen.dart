@@ -6,6 +6,7 @@ import 'package:printing/printing.dart';
 import '../models/bill_model.dart';
 import '../services/pdf_service.dart';
 import '../services/bill_storage.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CreateBillScreen extends StatefulWidget {
   const CreateBillScreen({super.key});
@@ -205,14 +206,14 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                         total: total,
                       );
 
-                      await Printing.layoutPdf(
-                        onLayout: (_) async {
-                          return await file.readAsBytes();
-                        },
-                      );
+                      // await Printing.layoutPdf(
+                      //   onLayout: (_) async {
+                      //     return await file.readAsBytes();
+                      //   },
+                      // );
 
                       // CHECK IF SCREEN STILL EXISTS
-                      if (!mounted) return;
+                      // if (!mounted) return;
 
                       await BillStorage.saveBill({
                         "customer": customerController.text,
@@ -221,6 +222,15 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
 
                         "date": DateTime.now().toString(),
                       });
+
+                      // SHARE PDF
+                      await SharePlus.instance.share(
+                        ShareParams(
+                          files: [XFile(file.path)],
+
+                          text: "Invoice from Zeeper",
+                        ),
+                      );
 
                       // SEND BILL DATA BACK
                       Navigator.pop(context, {

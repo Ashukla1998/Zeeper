@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DashboardScreen extends StatelessWidget {
   final List<Map<String, dynamic>> transactions;
 
-  DashboardScreen({required this.transactions});
+  const DashboardScreen({super.key, required this.transactions});
 
   double getTotal() =>
       transactions.fold(0, (sum, item) => sum + item["amount"]);

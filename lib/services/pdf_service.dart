@@ -118,7 +118,7 @@ class PdfService {
                         tableCell(item.amount.toStringAsFixed(2)),
                       ],
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/bill_storage.dart';
 import 'create_bill_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 class BillsScreen extends StatefulWidget {
   const BillsScreen({super.key});
@@ -132,6 +133,19 @@ class _BillsScreenState extends State<BillsScreen> {
                           ),
                         ],
                       ),
+
+                      // SHARE BUTTON
+                      IconButton(
+                        onPressed: () async {
+                          await Share.shareXFiles([
+                            XFile(bill["path"]),
+                          ], text: "Invoice from Zeeper");
+                        },
+
+                        icon: const Icon(Icons.share, color: Colors.white),
+                      ),
+
+                      const SizedBox(width: 8),
 
                       // RIGHT
                       Text(
