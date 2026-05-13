@@ -15,6 +15,8 @@ class PdfService {
     required String customerName,
     required List<BillItem> items,
     required double total,
+    required String status,
+    required String notes,
   }) async {
     final ByteData bytes = await rootBundle.load('assets/icon/zeeper.png');
 
@@ -121,6 +123,12 @@ class PdfService {
                   }),
                 ],
               ),
+
+              pw.Text("Status: $status"),
+
+              pw.Container(height: 8),
+
+              pw.Text("Notes: $notes"),
 
               pw.Container(height: 20),
 

@@ -1,7 +1,12 @@
+// bills_screen.dart
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
+
 import '../services/bill_storage.dart';
 import 'create_bill_screen.dart';
-// import 'package:share_plus/share_plus.dart';
 
 class BillsScreen extends StatefulWidget {
   const BillsScreen({super.key});
@@ -13,6 +18,7 @@ class BillsScreen extends StatefulWidget {
 class _BillsScreenState extends State<BillsScreen> {
   // BILL HISTORY
   List<Map> bills = [];
+
   @override
   void initState() {
     super.initState();
@@ -20,6 +26,7 @@ class _BillsScreenState extends State<BillsScreen> {
     loadBills();
   }
 
+  // LOAD BILLS
   void loadBills() async {
     final data = await BillStorage.getBills();
 
@@ -28,17 +35,19 @@ class _BillsScreenState extends State<BillsScreen> {
     });
   }
 
-  // ADD BILL
-  void addBill({required String customer, required String total}) {
-    setState(() {
-      bills.add({
-        "customer": customer,
+  // OPEN PDF
+  void openBill(String path) async {
+    final file = File(path);
 
-        "total": total,
+    if (await file.exists()) {
+      await OpenFilex.open(path);
+    } else {
+      if (!mounted) return;
 
-        "date": DateTime.now().toString(),
-      });
-    });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("PDF file not found")));
+    }
   }
 
   @override
@@ -54,28 +63,26 @@ class _BillsScreenState extends State<BillsScreen> {
         title: const Text("Bills"),
       ),
 
+      // ADD BILL
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
 
         onPressed: () async {
-          final result = await Navigator.push(
+          await Navigator.push(
             context,
 
             MaterialPageRoute(builder: (_) => const CreateBillScreen()),
           );
 
-          // RECEIVE GENERATED BILL
-          if (result != null) {
-            addBill(customer: result["customer"], total: result["total"]);
-          }
+          loadBills();
         },
 
         child: const Icon(Icons.add),
       ),
 
-      // BILL LIST
+      // BODY
       body: bills.isEmpty
-          // EMPTY STATE
+          // EMPTY
           ? const Center(
               child: Text(
                 "No Bills Yet",
@@ -92,61 +99,115 @@ class _BillsScreenState extends State<BillsScreen> {
               itemBuilder: (context, index) {
                 final bill = bills[index];
 
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
+                return GestureDetector(
+                  // OPEN PDF
+                  onTap: () {
+                    if (bill["path"] != null) {
+                      openBill(bill["path"]);
+                    }
+                  },
 
-                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 12),
 
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
+                    padding: const EdgeInsets.all(16),
 
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
 
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
 
-                    children: [
-                      // LEFT
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
-                        children: [
-                          Text(
-                            bill["customer"],
+                      children: [
+                        // LEFT SIDE
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                            style: const TextStyle(
-                              color: Colors.white,
+                            children: [
+                              // CUSTOMER
+                              Text(
+                                bill["customer"] ?? "",
 
-                              fontSize: 18,
+                                style: const TextStyle(
+                                  color: Colors.white,
 
-                              fontWeight: FontWeight.bold,
-                            ),
+                                  fontSize: 18,
+
+                                  fontWeight: FontWeight.bold,
+                                ),
+
+                                overflow: TextOverflow.ellipsis,
+                              ),
+
+                              const SizedBox(height: 6),
+
+                              // DATE
+                              Text(
+                                bill["date"] ?? "",
+
+                                style: const TextStyle(
+                                  color: Colors.grey,
+
+                                  fontSize: 12,
+                                ),
+
+                                overflow: TextOverflow.ellipsis,
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              // STATUS
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+
+                                  vertical: 4,
+                                ),
+
+                                decoration: BoxDecoration(
+                                  color: bill["status"] == "Paid"
+                                      ? Colors.green.withValues(alpha: 0.2)
+                                      : Colors.orange.withValues(alpha: 0.2),
+
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+
+                                child: Text(
+                                  bill["status"] ?? "",
+
+                                  style: TextStyle(
+                                    color: bill["status"] == "Paid"
+                                        ? Colors.green
+                                        : Colors.orange,
+
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-
-                          const SizedBox(height: 6),
-
-                          Text(
-                            bill["date"],
-
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-
-                      // RIGHT
-                      Text(
-                        "Rs. ${bill["total"]}",
-
-                        style: const TextStyle(
-                          color: Colors.green,
-
-                          fontSize: 18,
-
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                    ],
+
+                        const SizedBox(width: 12),
+
+                        // TOTAL
+                        Text(
+                          "Rs. ${bill["total"]}",
+
+                          style: const TextStyle(
+                            color: Colors.green,
+
+                            fontSize: 18,
+
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

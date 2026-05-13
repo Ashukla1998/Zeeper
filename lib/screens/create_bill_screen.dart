@@ -19,6 +19,9 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
   final customerController = TextEditingController();
 
   final shopController = TextEditingController();
+  String paymentStatus = "Paid";
+
+  final notesController = TextEditingController();
 
   List<BillItem> items = [BillItem(item: '', qty: 1, rate: 0)];
 
@@ -105,6 +108,41 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
 
                 const SizedBox(height: 20),
 
+                // PAYMENT STATUS
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2A2A2A),
+
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: paymentStatus,
+
+                      dropdownColor: const Color(0xFF1E1E1E),
+
+                      style: const TextStyle(color: Colors.white),
+
+                      isExpanded: true,
+
+                      items: ["Paid", "Pending", "Advance"].map((e) {
+                        return DropdownMenuItem(value: e, child: Text(e));
+                      }).toList(),
+
+                      onChanged: (value) {
+                        setState(() {
+                          paymentStatus = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
                 // ITEM LIST
                 ListView.builder(
                   shrinkWrap: true,
@@ -172,6 +210,20 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
 
                 const SizedBox(height: 16),
 
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: notesController,
+
+                  maxLines: 3,
+
+                  style: const TextStyle(color: Colors.white),
+
+                  decoration: inputDecoration(
+                    "Notes / Delivery Charges / Remarks",
+                  ),
+                ),
+
                 // GENERATE BILL BUTTON
                 SizedBox(
                   width: double.infinity,
@@ -204,6 +256,10 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                         items: items,
 
                         total: total,
+
+                        status: paymentStatus,
+
+                        notes: notesController.text,
                       );
 
                       // await Printing.layoutPdf(
@@ -221,6 +277,10 @@ class _CreateBillScreenState extends State<CreateBillScreen> {
                         "total": total.toStringAsFixed(2),
 
                         "date": DateTime.now().toString(),
+
+                        "status": paymentStatus,
+
+                        "notes": notesController.text,
                       });
 
                       // SHARE PDF
