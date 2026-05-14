@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'calculator_screen.dart';
+import 'add_expense_screen.dart';
 import 'dashboard_screen.dart';
 import 'history_screen.dart';
-import 'bills_screen.dart';
+import 'analytics_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -32,11 +32,16 @@ class _MainScreenState extends State<MainScreen> {
   void loadTransactions() {
     final data = box.values.toList();
 
+    if (!mounted) return;
+
     setState(() {
       transactions = data.map((item) {
         return {
           "amount": item["amount"],
-          "type": item["type"],
+          "paymentType": item["paymentType"],
+          "category": item["category"],
+          "note": item["note"],
+          "isExpense": item["isExpense"],
           "date": DateTime.parse(item["date"]),
         };
       }).toList();
@@ -44,24 +49,27 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // ADD TRANSACTION
-  void addTransaction(double amount, String type) {
+  void addTransaction({
+    required double amount,
+    required String paymentType,
+    required String category,
+    required String note,
+    required bool isExpense,
+  }) {
     final transaction = {
       "amount": amount,
-      "type": type,
+      "paymentType": paymentType,
+      "category": category,
+      "note": note,
+      "isExpense": isExpense,
       "date": DateTime.now().toIso8601String(),
     };
 
     // SAVE TO HIVE
     box.add(transaction);
 
-    // UPDATE UI
-    setState(() {
-      transactions.add({
-        "amount": amount,
-        "type": type,
-        "date": DateTime.parse(transaction["date"].toString()),
-      });
-    });
+    // REFRESH UI
+    loadTransactions();
   }
 
   // DELETE TRANSACTION
@@ -73,18 +81,23 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screens = [
-      CalculatorScreen(onAdd: addTransaction),
-
-      DashboardScreen(transactions: transactions),
-
-      HistoryScreen(transactions: transactions, onDelete: deleteTransaction),
-
-      BillsScreen(),
-    ];
-
     return Scaffold(
-      body: screens[selectedIndex],
+      body: IndexedStack(
+        index: selectedIndex,
+
+        children: [
+          DashboardScreen(transactions: transactions),
+
+          AddExpenseScreen(onAdd: addTransaction),
+
+          HistoryScreen(
+            transactions: transactions,
+            onDelete: deleteTransaction,
+          ),
+
+          AnalyticsScreen(transactions: transactions),
+        ],
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
@@ -96,17 +109,21 @@ class _MainScreenState extends State<MainScreen> {
         },
 
         type: BottomNavigationBarType.fixed,
+
         selectedFontSize: 12,
         unselectedFontSize: 11,
         iconSize: 22,
 
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.calculate), label: "Calc"),
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: "Dash"),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: "History"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+
+          BottomNavigationBarItem(icon: Icon(Icons.add_circle), label: "Add"),
+
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History"),
+
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: "Bills",
+            icon: Icon(Icons.analytics),
+            label: "Analytics",
           ),
         ],
       ),

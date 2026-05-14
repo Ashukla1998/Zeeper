@@ -1,5 +1,3 @@
-// main.dart
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -8,15 +6,17 @@ import 'screens/main_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // INIT HIVE
-  await Hive.initFlutter();
+  try {
+    // INIT HIVE
+    await Hive.initFlutter();
 
-  // OPEN BOX
-  await Hive.openBox('transactions');
+    // OPEN BOX
+    await Hive.openBox('transactions');
 
-  await Hive.openBox('billsBox');
-
-  runApp(const MyApp());
+    runApp(const MyApp());
+  } catch (e) {
+    debugPrint("APP ERROR: $e");
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -26,6 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
+      theme: ThemeData(brightness: Brightness.dark, useMaterial3: true),
+
       home: const MainScreen(),
     );
   }
